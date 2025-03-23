@@ -1,17 +1,3 @@
-📂 **Cấu trúc thư mục dự án**
-
-```
-dct-calculator/
-│── index.html   # Giao diện chính
-│── style.css    # Định dạng giao diện
-│── script.js    # Xử lý DCT 1D & DCT 2D
-└── README.md    # Hướng dẫn sử dụng
-```
-
----
-
-📄 **README.md**
-```md
 # Máy tính Biến đổi Cosine Rời rạc (DCT)
 
 ## 📌 Giới thiệu
@@ -41,4 +27,3 @@ dct-calculator/
 
 ## 📜 Giấy phép
 Dự án này được phát hành theo giấy phép MIT.
-```
