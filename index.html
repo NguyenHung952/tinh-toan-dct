@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Máy tính Biến đổi Cosine Rời rạc (DCT)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Máy tính Biến đổi Cosine Rời rạc (DCT)</h2>
+        <label for="matrixRows">Số hàng:</label>
+        <input type="number" id="matrixRows" min="1" max="10" value="4">
+        <label for="matrixCols">Số cột:</label>
+        <input type="number" id="matrixCols" min="1" max="10" value="4">
+        <button id="generateMatrix">Tạo ma trận</button>
+        <div id="matrixInput"></div>
+        <button id="computeDCT1D" style="display:none;">Tính DCT 1D</button>
+        <button id="computeDCT2D" style="display:none;">Tính DCT 2D</button>
+        <h3>Kết quả:</h3>
+        <div id="matrixResult"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
