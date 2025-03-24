@@ -13,7 +13,7 @@ document.getElementById("generateMatrix").addEventListener("click", function () 
             input.type = "number";
             input.min = "0";
             input.max = "255";
-            input.value = "0";
+            input.value = Math.floor(Math.random() * 256); // Sinh số ngẫu nhiên
             input.className = "matrix-input";
             cell.appendChild(input);
             row.appendChild(cell);
@@ -21,8 +21,9 @@ document.getElementById("generateMatrix").addEventListener("click", function () 
         table.appendChild(row);
     }
     matrixInput.appendChild(table);
-    document.getElementById("computeDCT1D").style.display = "block";
     document.getElementById("computeDCT2D").style.display = "block";
+    document.getElementById("computeQuantization").style.display = "block";
+    document.getElementById("computeInverseQuantization").style.display = "block";
 });
 
 function dct1D(matrix) {
@@ -34,18 +35,25 @@ function dct2D(matrix) {
     return matrix.map(row => dct1D(row)).map((_, j, temp) => temp.map(row => dct1D(row.map((_, i) => temp[i][j]))));
 }
 
-function formatMatrix(matrix) {
-    return "<table>" + matrix.map(row => "<tr>" + row.map(v => `<td>${isNaN(v) ? '0.00' : v.toFixed(2)}</td>`).join('') + "</tr>").join('') + "</table>";
+// Ma trận lượng tử hóa 4x4
+const quantMatrix = [
+    [8, 16, 19, 22],
+    [16, 16, 22, 24],
+    [19, 22, 26, 27],
+    [22, 22, 26, 27]
+];
+
+function quantize(dctMatrix) {
+    return dctMatrix.map((row, i) => row.map((val, j) => Math.round(val / quantMatrix[i][j])));
 }
 
-document.getElementById("computeDCT1D").addEventListener("click", function () {
-    let inputs = document.querySelectorAll(".matrix-input");
-    let rows = parseInt(document.getElementById("matrixRows").value);
-    let cols = parseInt(document.getElementById("matrixCols").value);
-    let matrix = Array.from({ length: rows }, (_, i) => Array.from({ length: cols }, (_, j) => parseFloat(inputs[i * cols + j].value) || 0));
-    let result = matrix.map(row => dct1D(row));
-    document.getElementById("matrixResult").innerHTML = "<h3>DCT 1D Kết quả:</h3>" + formatMatrix(result);
-});
+function inverseQuantize(quantizedMatrix) {
+    return quantizedMatrix.map((row, i) => row.map((val, j) => val * quantMatrix[i][j]));
+}
+
+function formatMatrix(matrix) {
+    return "<table>" + matrix.map(row => "<tr>" + row.map(v => `<td>${isNaN(v) ? '0' : Math.round(v)}</td>`).join('') + "</tr>").join('') + "</table>";
+}
 
 document.getElementById("computeDCT2D").addEventListener("click", function () {
     let inputs = document.querySelectorAll(".matrix-input");
@@ -54,4 +62,25 @@ document.getElementById("computeDCT2D").addEventListener("click", function () {
     let matrix = Array.from({ length: rows }, (_, i) => Array.from({ length: cols }, (_, j) => parseFloat(inputs[i * cols + j].value) || 0));
     let result = dct2D(matrix);
     document.getElementById("matrixResult").innerHTML = "<h3>DCT 2D Kết quả:</h3>" + formatMatrix(result);
+});
+
+document.getElementById("computeQuantization").addEventListener("click", function () {
+    let inputs = document.querySelectorAll(".matrix-input");
+    let rows = parseInt(document.getElementById("matrixRows").value);
+    let cols = parseInt(document.getElementById("matrixCols").value);
+    let matrix = Array.from({ length: rows }, (_, i) => Array.from({ length: cols }, (_, j) => parseFloat(inputs[i * cols + j].value) || 0));
+    let dctResult = dct2D(matrix);
+    let quantizedMatrix = quantize(dctResult);
+    document.getElementById("matrixResult").innerHTML = "<h3>Ma trận sau lượng tử hóa:</h3>" + formatMatrix(quantizedMatrix);
+});
+
+document.getElementById("computeInverseQuantization").addEventListener("click", function () {
+    let inputs = document.querySelectorAll(".matrix-input");
+    let rows = parseInt(document.getElementById("matrixRows").value);
+    let cols = parseInt(document.getElementById("matrixCols").value);
+    let matrix = Array.from({ length: rows }, (_, i) => Array.from({ length: cols }, (_, j) => parseFloat(inputs[i * cols + j].value) || 0));
+    let dctResult = dct2D(matrix);
+    let quantizedMatrix = quantize(dctResult);
+    let reconstructedMatrix = inverseQuantize(quantizedMatrix);
+    document.getElementById("matrixResult").innerHTML = "<h3>Trọng số (Nghịch lượng tử hóa):</h3>" + formatMatrix(reconstructedMatrix);
 });
